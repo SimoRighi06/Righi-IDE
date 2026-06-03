@@ -1,0 +1,14 @@
+:root {
+  color-scheme: dark;
+}
+
+body, html, #root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Rimuove i bordi blu di focus su Monaco */
+.monaco-editor {
+  padding-top: 10px;
+}

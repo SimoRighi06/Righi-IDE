@@ -1,0 +1,224 @@
+# ============================================
+# RIGHI-IDE — FILE DI TEST COMPLETO v1.0
+# Studente: Mario Rossi | Classe: 3A Info
+# ============================================
+
+
+# --- SEZIONE 1: VARIABILI E INPUT ---
+
+CHIEDI "Come ti chiami?" Nome
+CHIEDI "Quanti anni hai?" Eta
+FISSA Citta = "Roma"
+FISSA Anno = 2025
+
+STAMPA "Ciao " + Nome + "! Hai " + Eta + " anni e vivi a " + Citta
+
+
+# --- SEZIONE 2: CONDIZIONI ---
+
+SE Eta è "18" ALLORA
+    STAMPA "Sei maggiorenne!"
+ALTRIMENTI SE Eta è "17" ALLORA
+    STAMPA "Manca solo un anno!"
+ALTRIMENTI
+    STAMPA "Sei minorenne."
+FINE
+
+
+# --- SEZIONE 3: CICLO SEMPLICE ---
+
+STAMPA "Conto da 1 a 5:"
+RIPETI CON i DA 1 A 5
+    STAMPA "Numero: " + i
+FINE
+
+
+# --- SEZIONE 4: CICLO CON CONDIZIONE ---
+
+FISSA Tentativi = 0
+FISSA Segreto = "mela"
+
+CHIEDI "Indovina la parola segreta:" Risposta
+
+MENTRE Risposta è "mela" E Tentativi minore 3
+    FISSA Tentativi = Tentativi + 1
+    CHIEDI "Riprova:" Risposta
+FINE
+
+SE Risposta è "mela" ALLORA
+    STAMPA "Hai indovinato in " + Tentativi + " tentativi!"
+ALTRIMENTI
+    STAMPA "La parola era: mela"
+FINE
+
+
+# --- SEZIONE 5: LISTE ---
+
+LISTA Voti = [8, 6, 9, 7, 10, 5, 8]
+STAMPA "Voti: " + Voti
+STAMPA "Numero voti: " + LUNGHEZZA DI Voti
+
+AGGIUNGI 9 A Voti
+STAMPA "Dopo aggiunta: " + Voti
+
+RIMUOVI 5 DA Voti
+STAMPA "Dopo rimozione del 5: " + Voti
+
+FISSA Somma = 0
+PER OGNI Voto IN Voti
+    FISSA Somma = Somma + Voto
+FINE
+
+FISSA Media = Somma / LUNGHEZZA DI Voti
+STAMPA "Media voti: " + ARROTONDA Media
+
+
+# --- SEZIONE 6: DIZIONARIO ---
+
+DIZIONARIO Studente = {}
+IMPOSTA Studente["nome"] = Nome
+IMPOSTA Studente["eta"] = Eta
+IMPOSTA Studente["citta"] = Citta
+IMPOSTA Studente["media"] = ARROTONDA Media
+
+STAMPA "Scheda studente: " + Studente
+
+
+# --- SEZIONE 7: FUNZIONI ---
+
+FUNZIONE Saluta(persona)
+    STAMPA "Benvenuto, " + persona + "!"
+    RITORNA "Saluto completato"
+FINE
+
+FUNZIONE CalcolaAreaCerchio(raggio)
+    FISSA Pi = 3.14159
+    FISSA Area = Pi * raggio * raggio
+    RITORNA ARROTONDA Area
+FINE
+
+FUNZIONE TrovaMax(lista)
+    FISSA Max = 0
+    PER OGNI Elemento IN lista
+        SE Elemento maggiore Max ALLORA
+            FISSA Max = Elemento
+        FINE
+    FINE
+    RITORNA Max
+FINE
+
+CHIAMA Saluta(Nome)
+
+CHIEDI "Inserisci il raggio del cerchio:" Raggio
+FISSA Area = CHIAMA CalcolaAreaCerchio(CONVERTI Raggio IN NUMERO)
+STAMPA "Area del cerchio: " + Area
+
+FISSA VotoMax = CHIAMA TrovaMax(Voti)
+STAMPA "Il tuo voto più alto è: " + VotoMax
+
+
+# --- SEZIONE 8: GESTIONE ERRORI ---
+
+PROVA
+    CHIEDI "Inserisci un numero:" NumeroTesto
+    FISSA Numero = CONVERTI NumeroTesto IN NUMERO
+    FISSA Doppio = Numero * 2
+    STAMPA "Il doppio di " + Numero + " è " + Doppio
+SE ERRORE
+    STAMPA "Errore: hai inserito qualcosa che non è un numero!"
+ALLA FINE
+    STAMPA "Operazione completata."
+FINE
+
+
+# --- SEZIONE 9: NUMERI CASUALI E GIOCO ---
+
+STAMPA "Giochiamo! Ho pensato un numero tra 1 e 10."
+FISSA Pensato = CASUALE DA 1 A 10
+FISSA Trovato = "no"
+FISSA Mosse = 0
+
+MENTRE Trovato è "no"
+    CHIEDI "Qual è il numero?" Tentativo
+    FISSA Tentativo = CONVERTI Tentativo IN NUMERO
+    FISSA Mosse = Mosse + 1
+
+    SE Tentativo è Pensato ALLORA
+        FISSA Trovato = "si"
+        STAMPA "Bravo! Trovato in " + Mosse + " mosse!"
+    ALTRIMENTI SE Tentativo minore Pensato ALLORA
+        STAMPA "Troppo basso!"
+    ALTRIMENTI
+        STAMPA "Troppo alto!"
+    FINE
+FINE
+
+
+# --- SEZIONE 10: RIEPILOGO FINALE ---
+
+STAMPA "================================"
+STAMPA "RIEPILOGO DI " + Nome
+STAMPA "Eta: " + Eta
+STAMPA "Media voti: " + ARROTONDA Media
+STAMPA "Voto massimo: " + VotoMax
+STAMPA "Mosse nel gioco: " + Mosse
+STAMPA "================================"
+
+
+
+
+
+
+# ============================================
+# RIGHI-IDE — TEST JAVA: Registro Voti
+# ============================================
+
+LISTA Voti = [8, 6, 9, 7, 10, 5, 8, 9, 6, 7]
+
+FUNZIONE CalcolaMedia(lista)
+    FISSA Somma = 0
+    PER OGNI Voto IN lista
+        FISSA Somma = Somma + Voto
+    FINE
+    RITORNA Somma / LUNGHEZZA DI lista
+FINE
+
+FUNZIONE TrovaMax(lista)
+    FISSA Max = 0
+    PER OGNI Voto IN lista
+        SE Voto maggiore Max ALLORA
+            FISSA Max = Voto
+        FINE
+    FINE
+    RITORNA Max
+FINE
+
+FUNZIONE TrovaMin(lista)
+    FISSA Min = 10
+    PER OGNI Voto IN lista
+        SE Voto minore Min ALLORA
+            FISSA Min = Voto
+        FINE
+    FINE
+    RITORNA Min
+FINE
+
+FISSA Media = CHIAMA CalcolaMedia(Voti)
+FISSA Massimo = CHIAMA TrovaMax(Voti)
+FISSA Minimo = CHIAMA TrovaMin(Voti)
+
+STAMPA "=== Registro Voti ==="
+STAMPA "Voti: " + Voti
+STAMPA "Media: " + Media
+STAMPA "Voto massimo: " + Massimo
+STAMPA "Voto minimo: " + Minimo
+
+SE Media maggiore 7 ALLORA
+    STAMPA "Risultato: PROMOSSO con ottimi voti!"
+ALTRIMENTI SE Media maggiore 6 ALLORA
+    STAMPA "Risultato: PROMOSSO"
+ALTRIMENTI
+    STAMPA "Risultato: RIMANDATO"
+FINE
+
+STAMPA "=== Fine Report ==="
