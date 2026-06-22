@@ -9,7 +9,10 @@ dotenv.config();
 const app = express();
 
 // Manteniamo l'origine fissa su localhost come richiesto
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://righi-ide.vercel.app'],
+  credentials: true
+}));
 app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey_righi_ide";
