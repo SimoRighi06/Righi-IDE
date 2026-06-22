@@ -426,540 +426,447 @@ builtins.input = input
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div
-      className={`vh-100 d-flex flex-column overflow-hidden ${isDark ? "bg-dark text-light" : "bg-light text-dark"}`}
+  <div
+    className={`vh-100 d-flex flex-column overflow-hidden ${isDark ? "bg-dark text-light" : "bg-light text-dark"}`}
+  >
+    {/* AUTH MODAL */}
+    {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+
+    {/* NAVBAR RESPONSIVE */}
+    <BsNavbar
+      bg={isDark ? "black" : "light"}
+      variant={isDark ? "dark" : "light"}
+      className={`px-2 px-md-3 border-bottom ${isDark ? "border-secondary" : "border-secondary-subtle"}`}
+      style={{ minHeight: "50px", height: "auto" }} // Tolto l'altezza fissa rigida per evitare overflow su mobile
     >
-      {/* AUTH MODAL */}
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
-
-      {/* NAVBAR */}
-      <BsNavbar
-        bg={isDark ? "black" : "light"}
-        variant={isDark ? "dark" : "light"}
-        className={`px-3 border-bottom ${isDark ? "border-secondary" : "border-secondary-subtle"}`}
-        style={{ height: "50px" }}
-      >
-        <BsNavbar.Brand className="d-flex align-items-center gap-2">
-          <Cpu size={24} className="text-warning" />
-          <span
-            className={`fw-bold fs-5 ${isDark ? "text-light" : "text-dark"}`}
-          >
-            RIGHI-IDE
-          </span>
-        </BsNavbar.Brand>
-
-        {/* Account */}
-        {user ? (
-          <Stack direction="horizontal" gap={1}>
-            <div
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: "50%",
-                background: "#f59e0b",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "#000",
-              }}
-            >
-              {user.name[0].toUpperCase()}
-            </div>
-            <Button
-              variant="link"
-              size="sm"
-              onClick={logout}
-              title="Disconnetti"
-              className="p-1 text-secondary"
-            >
-              <LogOut size={18} />
-            </Button>
-          </Stack>
-        ) : (
-          <Button
-            variant="outline-secondary"
-            size="sm"
-            className="d-flex align-items-center gap-1"
-            onClick={() => setShowAuth(true)}
-          >
-            <LogIn size={18} /> Accedi
-          </Button>
-        )}
-
-        {/* Save status */}
+      <BsNavbar.Brand className="d-flex align-items-center gap-1 gap-md-2 me-auto me-md-3">
+        <Cpu size={20} className="text-warning flex-shrink-0" />
         <span
-          style={{
-            fontSize: "11px",
-            color: saveColor,
-            marginLeft: "16px",
-            fontFamily: "monospace",
-          }}
+          className={`fw-bold fs-6 fs-md-5 ${isDark ? "text-light" : "text-dark"}`}
         >
-          {saveLabel}
+          RIGHI-IDE
         </span>
+      </BsNavbar.Brand>
 
-        <Stack direction="horizontal" gap={2} className="ms-auto">
-          {/* Save button */}
-          <Button
-            variant="outline-warning"
-            size="sm"
-            onClick={handleSave}
-            style={{ fontSize: "12px", fontFamily: "monospace" }}
-          >
-            <Download size={13} style={{ marginRight: 4 }} />
-            {user ? "SALVA" : "SALVA (accedi)"}
-          </Button>
-
-          {/* Inserisci questo bottone subito PRIMA del selettore del linguaggio o vicino al tasto ESEGUI */}
-          {/* <Button
-            variant="outline-secondary"
-            size="sm"
-            className="me-2 text-warning border-secondary"
-            onClick={handleReverseTranslate}
-            title="Traduci il codice straniero in pseudocodice .rig"
-          >
-            ← Traduzione Inversa
-          </Button> */}
-
-          {/* Language selector */}
-          <Form.Select
-            size="sm"
-            style={{ width: "140px" }}
-            className={
-              isDark
-                ? "bg-dark text-light border-secondary"
-                : "bg-white text-dark"
-            }
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-          >
-            {[
-              "Python",
-              "JavaScript",
-              "TypeScript",
-              "Java",
-              "C#",
-              "C++",
-              "Kotlin",
-              "Go",
-            ].map((l) => (
-              <option key={l} value={l}>
-                {l}
-              </option>
-            ))}
-          </Form.Select>
-
-          {/* Run button */}
-          <Button
-            variant="warning"
-            size="sm"
-            className="fw-bold d-flex align-items-center gap-1"
-            onClick={language === "Python" ? runPython : runWithPiston}
-            disabled={isRunning}
-          >
-            <Play size={16} fill="currentColor" />
-            {isRunning ? "ESECUZIONE..." : "ESEGUI"}
-          </Button>
-        </Stack>
-      </BsNavbar>
-
-      {/* BODY */}
-      <div className="d-flex flex-grow-1 overflow-hidden">
-        {/* ACTIVITY BAR */}
-        <div
-          className={`d-flex flex-column align-items-center py-3 border-end ${isDark ? "border-secondary" : "border-secondary-subtle"}`}
-          style={{
-            width: "50px",
-            backgroundColor: isDark ? "#181818" : "#e1e1e1",
-          }}
-        >
-          <Button
-            variant="link"
-            className={`p-2 mb-2 ${activeTab === "explorer" && isSidebarOpen ? (isDark ? "text-warning" : "text-primary") : "text-secondary"}`}
-            onClick={() => toggleSidebar("explorer")}
-            title="Esplora Risorse"
-          >
-            <Files size={24} strokeWidth={1.5} />
-          </Button>
-          <Button
-            variant="link"
-            className={`p-2 ${activeTab === "settings" && isSidebarOpen ? (isDark ? "text-warning" : "text-primary") : "text-secondary"}`}
-            onClick={() => toggleSidebar("settings")}
-            title="Impostazioni"
-          >
-            <Settings size={24} strokeWidth={1.5} />
-          </Button>
-        </div>
-
-        {/* SIDEBAR */}
-        {isSidebarOpen && (
+      {/* Account - compattato su mobile */}
+      {user ? (
+        <Stack direction="horizontal" gap={1} className="me-2">
           <div
-            className={`d-flex flex-column border-end ${isDark ? "border-secondary" : "border-secondary-subtle"}`}
             style={{
-              width: "260px",
-              backgroundColor: isDark ? "#252526" : "#f3f3f3",
+              width: 24,
+              height: 24,
+              borderRadius: "50%",
+              background: "#f59e0b",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "10px",
+              fontWeight: 700,
+              color: "#000",
             }}
           >
-            {/* ── EXPLORER ── */}
-            {activeTab === "explorer" && (
-              <>
-                <div
-                  className={`px-3 py-2 text-uppercase fw-bold border-bottom d-flex align-items-center justify-content-between ${isDark ? "text-secondary border-secondary" : "text-muted border-secondary-subtle"}`}
-                  style={{ fontSize: "11px", letterSpacing: "0.08em" }}
-                >
-                  Esplora Risorse
-                  {user && (
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="p-0 text-secondary"
-                      onClick={handleNewFile}
-                      title="Nuovo file"
-                    >
-                      <FileCode2 size={14} />
-                    </Button>
-                  )}
+            {user.name[0].toUpperCase()}
+          </div>
+          <Button
+            variant="link"
+            size="sm"
+            onClick={logout}
+            title="Disconnetti"
+            className="p-1 text-secondary"
+          >
+            <LogOut size={16} />
+          </Button>
+        </Stack>
+      ) : (
+        <Button
+          variant="outline-secondary"
+          size="sm"
+          className="d-flex align-items-center gap-1 me-2 px-2"
+          onClick={() => setShowAuth(true)}
+          style={{ fontSize: "12px" }}
+        >
+          <LogIn size={14} /> <span className="d-none d-sm-inline">Accedi</span>
+        </Button>
+      )}
+
+      {/* Save status - Nascosto su schermi molto piccoli per salvare spazio */}
+      <span
+        className="d-none d-md-inline"
+        style={{
+          fontSize: "11px",
+          color: saveColor,
+          marginLeft: "8px",
+          fontFamily: "monospace",
+        }}
+      >
+        {saveLabel}
+      </span>
+
+      {/* Contenitore pulsanti di destra */}
+      <Stack direction="horizontal" gap={1} gap-md={2} className="ms-auto flex-wrap">
+        {/* Save button - Rimosso il testo lungo su mobile, lasciato solo l'icona */}
+        <Button
+          variant="outline-warning"
+          size="sm"
+          onClick={handleSave}
+          style={{ fontSize: "12px", fontFamily: "monospace" }}
+          className="px-2"
+        >
+          <Download size={13} />
+          <span className="d-none d-sm-inline ms-1">{user ? "SALVA" : "SALVA (accedi)"}</span>
+        </Button>
+
+        {/* Language selector - leggermente più stretto su mobile */}
+        <Form.Select
+          size="sm"
+          style={{ width: "110px" }}
+          className={`py-0 px-2 ${
+            isDark
+              ? "bg-dark text-light border-secondary"
+              : "bg-white text-dark"
+          }`}
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+        >
+          {[
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C#",
+            "C++",
+            "Kotlin",
+            "Go",
+          ].map((l) => (
+            <option key={l} value={l}>
+              {l}
+            </option>
+          ))}
+        </Form.Select>
+
+        {/* Run button */}
+        <Button
+          variant="warning"
+          size="sm"
+          className="fw-bold d-flex align-items-center gap-1 px-2"
+          onClick={language === "Python" ? runPython : runWithPiston}
+          disabled={isRunning}
+          style={{ fontSize: "12px" }}
+        >
+          <Play size={14} fill="currentColor" />
+          <span>{isRunning ? "..." : "ESEGUI"}</span>
+        </Button>
+      </Stack>
+    </BsNavbar>
+
+    {/* BODY */}
+    <div className="d-flex flex-grow-1 overflow-hidden position-relative">
+      {/* ACTIVITY BAR */}
+      <div
+        className={`d-flex flex-column align-items-center py-3 border-end ${isDark ? "border-secondary" : "border-secondary-subtle"}`}
+        style={{
+          width: "50px",
+          backgroundColor: isDark ? "#181818" : "#e1e1e1",
+          zIndex: 10,
+        }}
+      >
+        <Button
+          variant="link"
+          className={`p-2 mb-2 ${activeTab === "explorer" && isSidebarOpen ? (isDark ? "text-warning" : "text-primary") : "text-secondary"}`}
+          onClick={() => toggleSidebar("explorer")}
+          title="Esplora Risorse"
+        >
+          <Files size={24} strokeWidth={1.5} />
+        </Button>
+        <Button
+          variant="link"
+          className={`p-2 ${activeTab === "settings" && isSidebarOpen ? (isDark ? "text-warning" : "text-primary") : "text-secondary"}`}
+          onClick={() => toggleSidebar("settings")}
+          title="Impostazioni"
+        >
+          <Settings size={24} strokeWidth={1.5} />
+        </Button>
+      </div>
+
+      {/* SIDEBAR - Diventa in ABSOLUTE OVERLAY su Mobile così non stringe l'editor */}
+      {isSidebarOpen && (
+        <div
+          className={`d-flex flex-column border-end position-absolute position-md-static h-100 ${isDark ? "border-secondary" : "border-secondary-subtle"}`}
+          style={{
+            width: "260px",
+            backgroundColor: isDark ? "#252526" : "#f3f3f3",
+            zIndex: 5, // Sopra l'editor solo quando aperta su mobile
+            left: "50px", // Si aggancia subito dopo l'activity bar
+          }}
+        >
+          {/* ── EXPLORER ── */}
+          {activeTab === "explorer" && (
+            <>
+              <div
+                className={`px-3 py-2 text-uppercase fw-bold border-bottom d-flex align-items-center justify-content-between ${isDark ? "text-secondary border-secondary" : "text-muted border-secondary-subtle"}`}
+                style={{ fontSize: "11px", letterSpacing: "0.08em" }}
+              >
+                Esplora Risorse
+                {user && (
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="p-0 text-secondary"
+                    onClick={handleNewFile}
+                    title="Nuovo file"
+                  >
+                    <FileCode2 size={14} />
+                  </Button>
+                )}
+              </div>
+
+              <div className="p-2" style={{ flex: 1, overflowY: "auto" }}>
+                {/* Current project */}
+                <div className={`d-flex align-items-center gap-1 mb-2 px-1 ${isDark ? "text-light" : "text-dark"}`}>
+                  <ChevronDown size={16} />
+                  <FolderClosed size={16} className="text-warning" />
+                  <span className="fw-bold small">PROGETTO_ATTUALE</span>
                 </div>
 
-                <div className="p-2" style={{ flex: 1, overflowY: "auto" }}>
-                  {/* Current project */}
-                  <div
-                    className={`d-flex align-items-center gap-1 mb-2 px-1 ${isDark ? "text-light" : "text-dark"}`}
-                  >
-                    <ChevronDown size={16} />
-                    <FolderClosed size={16} className="text-warning" />
-                    <span className="fw-bold small">PROGETTO_ATTUALE</span>
-                  </div>
-
-                  {/* .rig file */}
-                  <div
-                    className={`d-flex align-items-center justify-content-between px-3 py-1 rounded ${isDark ? "text-warning bg-secondary bg-opacity-25" : "text-primary bg-secondary bg-opacity-10"}`}
-                    style={{ minHeight: "32px" }}
-                  >
-                    <div className="d-flex align-items-center gap-2 flex-grow-1 overflow-hidden">
-                      <FileCode2 size={16} className="flex-shrink-0" />
-                      {isEditingName ? (
-                        <Form.Control
-                          size="sm"
-                          value={fileName}
-                          autoFocus
-                          style={{ height: "20px" }}
-                          className={`p-0 px-1 font-monospace ${isDark ? "bg-dark text-light border-warning" : ""}`}
-                          onChange={(e) =>
-                            setFileName(
-                              e.target.value.replace(/[^a-zA-Z0-9_-]/g, ""),
-                            )
-                          }
-                          onBlur={() => setIsEditingName(false)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") setIsEditingName(false);
-                          }}
-                        />
-                      ) : (
-                        <span
-                          className="small font-monospace text-truncate"
-                          onDoubleClick={() => setIsEditingName(true)}
-                        >
-                          {fileName}.rig
-                        </span>
-                      )}
-                    </div>
-                    {!isEditingName && (
-                      <Button
-                        variant="link"
-                        className="p-0 text-secondary ms-2"
-                        onClick={() => setIsEditingName(true)}
+                {/* .rig file */}
+                <div
+                  className={`d-flex align-items-center justify-content-between px-3 py-1 rounded ${isDark ? "text-warning bg-secondary bg-opacity-25" : "text-primary bg-secondary bg-opacity-10"}`}
+                  style={{ minHeight: "32px" }}
+                >
+                  <div className="d-flex align-items-center gap-2 flex-grow-1 overflow-hidden">
+                    <FileCode2 size={16} className="flex-shrink-0" />
+                    {isEditingName ? (
+                      <Form.Control
+                        size="sm"
+                        value={fileName}
+                        autoFocus
+                        style={{ height: "20px" }}
+                        className={`p-0 px-1 font-monospace ${isDark ? "bg-dark text-light border-warning" : ""}`}
+                        onChange={(e) =>
+                          setFileName(e.target.value.replace(/[^a-zA-Z0-9_-]/g, ""))
+                        }
+                        onBlur={() => setIsEditingName(false)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") setIsEditingName(false);
+                        }}
+                      />
+                    ) : (
+                      <span
+                        className="small font-monospace text-truncate"
+                        onDoubleClick={() => setIsEditingName(true)}
                       >
-                        <Pencil size={12} />
-                      </Button>
+                        {fileName}.rig
+                      </span>
                     )}
                   </div>
-
-                  {/* translated file */}
-                  <div
-                    className="d-flex align-items-center gap-2 px-3 py-1 mt-1"
-                    style={{ marginLeft: "12px" }}
-                  >
-                    <CornerDownRight
-                      size={14}
-                      className="text-secondary flex-shrink-0"
-                    />
-                    <FileCode2
-                      size={14}
-                      className="text-secondary flex-shrink-0"
-                    />
-                    <span className="small font-monospace text-truncate text-secondary">
-                      {fileName}.{getLangExt(language)}
-                    </span>
-                  </div>
-
-                  {/* Cloud files */}
-                  {user && files.length > 0 && (
-                    <>
-                      <div
-                        className={`mt-3 mb-1 px-1 d-flex align-items-center gap-1 ${isDark ? "text-secondary" : "text-muted"}`}
-                        style={{ fontSize: "11px", letterSpacing: "0.06em" }}
-                      >
-                        <ChevronDown size={14} />
-                        <FolderClosed size={14} />
-                        <span className="fw-bold">I MIEI FILE</span>
-                      </div>
-                      {files.map((f) => (
-                        <div
-                          key={f._id}
-                          onClick={() => handleOpenFile(f)}
-                          className={`d-flex align-items-center gap-2 px-3 py-1 rounded`}
-                          style={{
-                            cursor: "pointer",
-                            minHeight: "28px",
-                            background:
-                              activeFileId === f._id
-                                ? isDark
-                                  ? "rgba(255,255,255,0.1)"
-                                  : "rgba(0,0,0,0.08)"
-                                : "transparent",
-                          }}
-                          onMouseEnter={(e) => {
-                            if (activeFileId !== f._id)
-                              (
-                                e.currentTarget as HTMLElement
-                              ).style.background = isDark
-                                ? "rgba(255,255,255,0.05)"
-                                : "rgba(0,0,0,0.04)";
-                          }}
-                          onMouseLeave={(e) => {
-                            if (activeFileId !== f._id)
-                              (
-                                e.currentTarget as HTMLElement
-                              ).style.background = "transparent";
-                          }}
-                        >
-                          <FileCode2
-                            size={14}
-                            className="text-info flex-shrink-0"
-                          />
-                          <span
-                            className="small font-monospace text-truncate"
-                            style={{ color: isDark ? "#9cdcfe" : "#0070c1" }}
-                          >
-                            {f.name}
-                          </span>
-                          <span
-                            className="ms-auto"
-                            style={{ fontSize: "10px", color: "#555" }}
-                          >
-                            {f.language}
-                          </span>
-                        </div>
-                      ))}
-                    </>
-                  )}
-
-                  {/* Not logged in prompt */}
-                  {!user && (
-                    <div
-                      className="mt-3 px-2 text-center"
-                      style={{ fontSize: "12px", color: "#666" }}
+                  {!isEditingName && (
+                    <Button
+                      variant="link"
+                      className="p-0 text-secondary ms-2"
+                      onClick={() => setIsEditingName(true)}
                     >
-                      <User
-                        size={20}
-                        style={{ marginBottom: "6px", opacity: 0.4 }}
-                      />
-                      <div>Accedi per salvare i file nel cloud</div>
-                      <Button
-                        variant="outline-warning"
-                        size="sm"
-                        className="mt-2 w-100"
-                        style={{ fontSize: "11px" }}
-                        onClick={() => setShowAuth(true)}
-                      >
-                        Accedi / Registrati
-                      </Button>
-                    </div>
+                      <Pencil size={12} />
+                    </Button>
                   )}
                 </div>
 
-                {/* File actions */}
-                <div
-                  className={`p-3 border-top ${isDark ? "border-secondary" : "border-secondary-subtle"}`}
-                >
-                  <span className="text-secondary small fw-bold mb-2 d-block">
-                    AZIONI FILE
+                {/* translated file */}
+                <div className="d-flex align-items-center gap-2 px-3 py-1 mt-1" style={{ marginLeft: "12px" }}>
+                  <CornerDownRight size={14} className="text-secondary flex-shrink-0" />
+                  <FileCode2 size={14} className="text-secondary flex-shrink-0" />
+                  <span className="small font-monospace text-truncate text-secondary">
+                    {fileName}.{getLangExt(language)}
                   </span>
-                  <Stack gap={2}>
-                    <input
-                      type="file"
-                      accept=".rig"
-                      ref={fileInputRef}
-                      style={{ display: "none" }}
-                      onChange={handleImportRig}
-                    />
-                    <Button
-                      variant="outline-info"
-                      size="sm"
-                      className="d-flex align-items-center justify-content-center gap-2 w-100"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      <Upload size={14} /> Importa .rig
-                    </Button>
-                    <Button
-                      variant={isDark ? "outline-light" : "outline-dark"}
-                      size="sm"
-                      className="d-flex align-items-center justify-content-center gap-2 w-100"
-                      onClick={() =>
-                        downloadFile(naturalCode, `${fileName}.rig`)
-                      }
-                    >
-                      <Download size={14} /> Scarica .rig
-                    </Button>
-                    <Button
-                      variant="success"
-                      size="sm"
-                      className="d-flex align-items-center justify-content-center gap-2 w-100 fw-bold"
-                      onClick={() =>
-                        downloadFile(
-                          pythonCode,
-                          `${fileName}.${getLangExt(language)}`,
-                        )
-                      }
-                    >
-                      <Download size={14} /> Scarica .{getLangExt(language)}
-                    </Button>
-                  </Stack>
                 </div>
-              </>
-            )}
 
-            {/* ── SETTINGS ── */}
-            {activeTab === "settings" && (
-              <div className="p-3">
-                <p
-                  className={`fw-bold mb-3 ${isDark ? "text-light" : "text-dark"}`}
+                {/* Cloud files */}
+                {user && files.length > 0 && (
+                  <>
+                    <div
+                      className={`mt-3 mb-1 px-1 d-flex align-items-center gap-1 ${isDark ? "text-secondary" : "text-muted"}`}
+                      style={{ fontSize: "11px", letterSpacing: "0.06em" }}
+                    >
+                      <ChevronDown size={14} />
+                      <FolderClosed size={14} />
+                      <span className="fw-bold">I MIEI FILE</span>
+                    </div>
+                    {files.map((f) => (
+                      <div
+                        key={f._id}
+                        onClick={() => handleOpenFile(f)}
+                        className="d-flex align-items-center gap-2 px-3 py-1 rounded"
+                        style={{
+                          cursor: "pointer",
+                          minHeight: "28px",
+                          background: activeFileId === f._id ? (isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)") : "transparent",
+                        }}
+                      >
+                        <FileCode2 size={14} className="text-info flex-shrink-0" />
+                        <span
+                          className="small font-monospace text-truncate"
+                          style={{ color: isDark ? "#9cdcfe" : "#0070c1" }}
+                        >
+                          {f.name}
+                        </span>
+                        <span className="ms-auto" style={{ fontSize: "10px", color: "#555" }}>
+                          {f.language}
+                        </span>
+                      </div>
+                    ))}
+                  </>
+                )}
+
+                {/* Not logged in prompt */}
+                {!user && (
+                  <div className="mt-3 px-2 text-center" style={{ fontSize: "12px", color: "#666" }}>
+                    <User size={20} style={{ marginBottom: "6px", opacity: 0.4 }} />
+                    <div>Accedi per salvare nel cloud</div>
+                    <Button
+                      variant="outline-warning"
+                      size="sm"
+                      className="mt-2 w-100"
+                      style={{ fontSize: "11px" }}
+                      onClick={() => setShowAuth(true)}
+                    >
+                      Accedi / Registrati
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* File actions */}
+              <div className={`p-2 border-top ${isDark ? "border-secondary" : "border-secondary-subtle"}`}>
+                <Stack gap={1}>
+                  <input type="file" accept=".rig" ref={fileInputRef} style={{ display: "none" }} onChange={handleImportRig} />
+                  <Button variant="outline-info" size="sm" className="py-1 px-2 d-flex align-items-center justify-content-center gap-1 w-100" style={{ fontSize: '11px' }} onClick={() => fileInputRef.current?.click()}>
+                    <Upload size={12} /> Importa .rig
+                  </Button>
+                  <Button variant={isDark ? "outline-light" : "outline-dark"} size="sm" className="py-1 px-2 d-flex align-items-center justify-content-center gap-1 w-100" style={{ fontSize: '11px' }} onClick={() => downloadFile(naturalCode, `${fileName}.rig`)}>
+                    <Download size={12} /> Scarica .rig
+                  </Button>
+                </Stack>
+              </div>
+            </>
+          )}
+
+          {/* ── SETTINGS ── */}
+          {activeTab === "settings" && (
+            <div className="p-3">
+              <p className={`fw-bold mb-3 ${isDark ? "text-light" : "text-dark"}`}>Impostazioni</p>
+              <Form.Group className="mb-3">
+                <Form.Label className="small text-secondary fw-bold mb-1">TEMA COLORI</Form.Label>
+                <Form.Select
+                  size="sm"
+                  value={theme}
+                  onChange={(e) => setTheme(e.target.value as "dark" | "light")}
+                  className={isDark ? "bg-dark text-light border-secondary" : ""}
                 >
-                  Impostazioni
-                </p>
-                <Form.Group className="mb-3">
-                  <Form.Label className="small text-secondary fw-bold mb-1">
-                    TEMA COLORI
-                  </Form.Label>
-                  <Form.Select
-                    size="sm"
-                    value={theme}
-                    onChange={(e) =>
-                      setTheme(e.target.value as "dark" | "light")
-                    }
-                    className={
-                      isDark ? "bg-dark text-light border-secondary" : ""
-                    }
-                  >
-                    <option value="dark">Scuro (Dark)</option>
-                    <option value="light">Chiaro (Light)</option>
-                  </Form.Select>
-                </Form.Group>
-                <hr
-                  className={
-                    isDark ? "border-secondary" : "border-secondary-subtle"
-                  }
-                />
-                <div style={{ fontSize: "11px", color: "#666" }}>
-                  <span className="d-block fw-bold">Righi-IDE Engine</span>
-                  <span className="d-block">Versione: 2.0.0</span>
-                  {user && (
-                    <span className="d-block mt-1" style={{ color: "#f59e0b" }}>
-                      Account: {user.email}
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* EDITORS + TERMINAL */}
-        <Container
-          fluid
-          className="p-0 d-flex flex-column flex-grow-1 overflow-hidden"
-        >
-          <Row className="g-0 flex-grow-1">
-            <Col
-              md={6}
-              className={`h-100 border-end position-relative ${isDark ? "border-secondary" : "border-secondary-subtle"}`}
-            >
-              <div className="position-absolute top-0 end-0 p-2 z-3 text-secondary small font-monospace select-none">
-                {fileName}.rig
-              </div>
-              <Editor
-                height="100%"
-                language="rig"
-                theme={isDark ? "vs-dark" : "light"}
-                value={naturalCode}
-                onChange={(v) => setNaturalCode(v || "")}
-                options={{
-                  fontSize: 16,
-                  minimap: { enabled: false },
-                  padding: { top: 16 },
-                }}
-              />
-            </Col>
-            <Col
-              md={6}
-              className={`h-100 position-relative ${isDark ? "bg-black" : "bg-white"}`}
-            >
-              <div className="position-absolute top-0 end-0 p-2 z-3 text-secondary small font-monospace select-none">
-                {fileName}.{getLangExt(language)}
-              </div>
-              <Editor
-                height="100%"
-                language={getMonacoLang(language)}
-                theme={isDark ? "vs-dark" : "light"}
-                value={pythonCode}
-                options={{
-                  readOnly: true,
-                  minimap: { enabled: false },
-                  fontSize: 14,
-                  padding: { top: 16 },
-                }}
-              />
-            </Col>
-          </Row>
-
-          {/* Terminal */}
-          <div
-            className={`p-2 border-top ${isDark ? "bg-black border-secondary" : "bg-light border-secondary-subtle"}`}
-            style={{ height: "30%" }}
-          >
-            <div className="d-flex align-items-center gap-2 mb-2 text-secondary px-2">
-              <TerminalIcon size={14} />
-              <small className="fw-bold">TERMINALE DI OUTPUT</small>
-              <span
-                style={{
-                  marginLeft: "auto",
-                  fontSize: "11px",
-                  fontFamily: "monospace",
-                  color: "#555",
-                }}
-              >
-                Ctrl+Enter per eseguire · Ctrl+S per salvare
-              </span>
+                  <option value="dark">Scuro (Dark)</option>
+                  <option value="light">Chiaro (Light)</option>
+                </Form.Select>
+              </Form.Group>
             </div>
-            <div
-              className="h-100 overflow-auto px-3 font-monospace small pb-4"
+          )}
+        </div>
+      )}
+
+      {/* EDITORS + TERMINAL RESPONSIVI */}
+      <Container
+        fluid
+        className="p-0 d-flex flex-column flex-grow-1 overflow-auto overflow-md-hidden" // Permette lo scroll globale solo su mobile
+      >
+        <Row className="g-0 flex-grow-1 d-flex flex-column flex-md-row">
+          {/* PRIMO EDITOR (.rig) */}
+          <Col
+            xs={12}
+            md={6}
+            style={{ minHeight: "350px" }} // Evita che l'editor collassi a 0px su mobile
+            className={`h-md-100 border-bottom border-md-bottom-0 border-md-end position-relative ${isDark ? "border-secondary" : "border-secondary-subtle"}`}
+          >
+            <div className="position-absolute top-0 end-0 p-2 z-3 text-secondary small font-monospace select-none" style={{ fontSize: "11px" }}>
+              {fileName}.rig
+            </div>
+            <Editor
+              height="100%"
+              language="rig"
+              theme={isDark ? "vs-dark" : "light"}
+              value={naturalCode}
+              onChange={(v) => setNaturalCode(v || "")}
+              options={{
+                fontSize: 15,
+                minimap: { enabled: false },
+                padding: { top: 16 },
+                scrollbar: { vertical: "visible", horizontal: "auto" }
+              }}
+            />
+          </Col>
+
+          {/* SECONDO EDITOR (Codice Tradotto) */}
+          <Col
+            xs={12}
+            md={6}
+            style={{ minHeight: "350px" }}
+            className={`h-md-100 position-relative ${isDark ? "bg-black" : "bg-white"}`}
+          >
+            <div className="position-absolute top-0 end-0 p-2 z-3 text-secondary small font-monospace select-none" style={{ fontSize: "11px" }}>
+              {fileName}.{getLangExt(language)}
+            </div>
+            <Editor
+              height="100%"
+              language={getMonacoLang(language)}
+              theme={isDark ? "vs-dark" : "light"}
+              value={pythonCode}
+              options={{
+                readOnly: true,
+                minimap: { enabled: false },
+                fontSize: 14,
+                padding: { top: 16 },
+                scrollbar: { vertical: "visible", horizontal: "auto" }
+              }}
+            />
+          </Col>
+        </Row>
+
+        {/* Terminale di Output */}
+        <div
+          className={`p-2 border-top ${isDark ? "bg-black border-secondary" : "bg-light border-secondary-subtle"}`}
+          style={{ minHeight: "200px", height: "auto" }} // Adattabile su mobile per evitare testi tagliati
+        >
+          <div className="d-flex align-items-center justify-content-between gap-2 mb-2 text-secondary px-1 flex-wrap">
+            <div className="d-flex align-items-center gap-1">
+              <TerminalIcon size={14} />
+              <small className="fw-bold" style={{ fontSize: '10px' }}>TERMINALE DI OUTPUT</small>
+            </div>
+            <span
+              className="d-none d-sm-inline"
               style={{
-                backgroundColor: isDark ? "#050505" : "#fff",
-                color: isDark ? "#4ade80" : "#000",
+                fontSize: "10px",
+                fontFamily: "monospace",
+                color: "#555",
               }}
             >
-              {terminalOutput.map((line, i) => (
-                <div key={i}>{line}</div>
-              ))}
-            </div>
+              Ctrl+Enter per eseguire · Ctrl+S per salvare
+            </span>
           </div>
-        </Container>
-      </div>
+          <div
+            className="overflow-auto px-2 font-monospace small pb-4"
+            style={{
+              height: "150px", // Altezza fissa interna comoda per lo scroll dell'output su mobile
+              backgroundColor: isDark ? "#050505" : "#fff",
+              color: isDark ? "#4ade80" : "#000",
+              whiteSpace: "pre-wrap", // Evita che l'output scappi fuori a destra dello schermo dello smartphone
+              wordBreak: "break-all"
+            }}
+          >
+            {terminalOutput.map((line, i) => (
+              <div key={i}>{line}</div>
+            ))}
+          </div>
+        </div>
+      </Container>
     </div>
-  );
+  </div>
+);
 };
 
 export default App;
