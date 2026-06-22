@@ -33,7 +33,7 @@ import Editor, { useMonaco } from "@monaco-editor/react";
 
 const App = () => {
   const { user, logout } = useAuth();
-  const { files, createFile, saveFile, deleteFile } = useCloudFiles();
+  const { files, createFile, saveFile } = useCloudFiles();
 
   const [showAuth, setShowAuth] = useState(false);
   const [naturalCode, setNaturalCode] = useState(
@@ -420,9 +420,9 @@ builtins.input = input
         ? "⏳ Salvataggio..."
         : "● Non salvato";
 
-  function handleReverseTranslate(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+  /* function handleReverseTranslate(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
     throw new Error("Function not implemented.");
-  }
+  } */
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
