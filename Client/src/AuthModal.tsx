@@ -69,21 +69,27 @@ export const AuthModal = ({ onClose }: Props) => {
   };
 
   const handleGoogleLogin = () => {
-    localStorage.setItem("oauth_provider", "google"); // Salva il provider per ricordarlo al ritorno
-    const clientID = "IL_TUO_GOOGLE_CLIENT_ID_DEL_ENV"; // Sostituisci con il tuo vero Client ID Google
-    const redirectURI = "http://localhost:5173";
-    const scope =
-      "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
+    localStorage.setItem("oauth_provider", "google");
+    
+    // Rileva automaticamente se siamo sul sito online o in locale
+    const currentOrigin = window.location.origin; // Sarà http://localhost:5173 o il link di Vercel
+    
+    // Usa le variabili d'ambiente di Vite, oppure una stringa temporanea se preferisci inserirlo a mano
+    const clientID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "IL_TUO_GOOGLE_CLIENT_ID_REALE";
+    const scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
 
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientID}&redirect_uri=${redirectURI}&response_type=code&scope=${encodeURIComponent(scope)}`;
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientID}&redirect_uri=${encodeURIComponent(currentOrigin)}&response_type=code&scope=${encodeURIComponent(scope)}`;
   };
 
   const handleGithubLogin = () => {
-    localStorage.setItem("oauth_provider", "github"); // Salva il provider per ricordarlo al ritorno
-    const clientID = "IL_TUO_GITHUB_CLIENT_ID_DEL_ENV"; // Sostituisci con il tuo vero Client ID GitHub
-    const redirectURI = "http://localhost:5173";
+    localStorage.setItem("oauth_provider", "github");
+    
+    // Rileva automaticamente se siamo sul sito online o in locale
+    const currentOrigin = window.location.origin; // Evita di spaccare il redirectURI
+    
+    const clientID = import.meta.env.VITE_GITHUB_CLIENT_ID || "IL_TUO_GITHUB_CLIENT_ID_REALE";
 
-    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientID}&redirect_uri=${redirectURI}`;
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientID}&redirect_uri=${encodeURIComponent(currentOrigin)}`;
   };
 
   return (

@@ -37,7 +37,7 @@ const FileSchema = new mongoose.Schema({
   rigContent:        { type: String, default: "" },
   translatedContent: { type: String, default: "" },
   parentId:          { type: mongoose.Schema.Types.ObjectId, ref: "File", default: null },
-  isPublic: { type: Boolean, default: false },
+  isPublic:          { type: Boolean, default: false },
 }, { timestamps: true });
 const File = mongoose.model("File", FileSchema);
 
@@ -66,25 +66,25 @@ const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction): vo
 app.post("/api/auth/register", async (req: Request, res: Response): Promise<any> => {
   const { name, email, password } = req.body;
 
-  // --- 1. VALIDAZIONE EMAIL E PASSWORD ---
+  // ─── VALIDAZIONE DEI PARAMETRI (EMAIL E PASSWORD) ───
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email || !emailRegex.test(email)) {
     return res.status(400).json({ error: "Formato email non valido." });
   }
 
+  // Almeno 8 caratteri, una maiuscola, una minuscola e un numero
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\w\W]{8,}$/;
   if (!password || !passwordRegex.test(password)) {
     return res.status(400).json({ 
-      error: "La password deve essere di almeno 8 caratteri, contenere un numero, una maiuscola e una minuscola." 
+      error: "La password deve contenere almeno 8 caratteri, una lettera maiuscola, una minuscola e un numero." 
     });
   }
-  // ---------------------------------------
+  // ─────────────────────────────────────────────────────
 
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ error: "Email già registrata" });
 
-    // ... il resto del tuo codice (bcrypt.hash, User.create, jwt.sign...)
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({ name, email, password: hashedPassword });
 
@@ -190,16 +190,20 @@ app.delete("/api/files/:id", authMiddleware, async (req: AuthRequest, res: Respo
   }
 });
 
-// ─── ROTTA AI DI TRADUZIONE (OTTIMIZZATA JSON) ───────────────────────────────
+// ─── ROTTA AI DI TRADUZIONE (OTTIMIZZATA JSON CON COMMENTI LEGATI AL LINGUAGGIO) ───
 const SUPPORTED_LANGUAGES = ["Python", "JavaScript", "TypeScript", "Java", "C#", "C++", "Kotlin", "Swift", "Go", "Rust"];
 
-const buildSystemPrompt = (language: string) =>
-  `Sei il motore di Righi-IDE. Traduci lo pseudocodice italiano fornito dall'utente in codice ${language} sintatticamente valido.
+const buildSystemPrompt = (language: string) => {
+  // Configura dinamicamente lo stile del commento in base al linguaggio target
+  const commentSyntax = language === "Python" ? "#" : "//";
+
+  return `Sei il motore di Righi-IDE. Traduci lo pseudocodice italiano fornito dall'utente in codice ${language} sintatticamente valido.
 REGOLE RIGIDE:
 1. Devi rispondere ESCLUSIVAMENTE con un oggetto JSON valido. È vietato qualsiasi testo prima o dopo il JSON.
 2. L'oggetto JSON deve avere una singola chiave "code" contenente la stringa del codice tradotto.
-3. La prima riga del codice generato deve SEMPRE essere un commento con scritto esattamente: "# Codice generato da Righi-IDE v2 (${language})" (adatta il simbolo di commento in base al linguaggio).
-4. Mappature logiche standard:
+3. Qualsiasi commento inserito all'interno del codice tradotto deve TASSATIVAMENTE usare la sintassi dei commenti propria di ${language} (ovvero il simbolo "${commentSyntax}"). Non mischiare mai stili differenti.
+4. La prima riga del codice generato deve SEMPRE essere un commento con scritto esattamente: "${commentSyntax} Codice generato da Righi-IDE v2 (${language})".
+5. Mappature logiche standard:
    - CHIEDI "testo" Nome -> Input/Lettura dati da tastiera salvata nella variabile Nome.
    - STAMPA "testo" -> Output a schermo.
    - RIPETI N VOLTE / MENTRE -> Cicli for / while.
@@ -207,8 +211,9 @@ REGOLE RIGIDE:
 
 Esempio di output JSON richiesto:
 {
-  "code": "# Codice generato da Righi-IDE v2 (Python)\\nNome = input(\\"Come ti chiami? \\")\\nprint(\\"Ciao \\" + Nome)"
+  "code": "${commentSyntax} Codice generato da Righi-IDE v2 (${language})\\nNome = input(\\"Come ti chiami? \\")\\nprint(\\"Ciao \\" + Nome)"
 }`;
+};
 
 app.post("/api/translate", async (req: Request, res: Response): Promise<any> => {
   const { prompt, language = "Python" } = req.body;
@@ -295,7 +300,7 @@ Prendi in input del codice scritto in ${language} e traducilo nello pseudocodice
 REGOLE RIGIDE:
 1. Rispondi ESCLUSIVAMENTE con un oggetto JSON valido: { "rigCode": "il tuo codice .rig" }.
 2. Usa le parole chiave del linguaggio .rig: STAMPA, CHIEDI, SE/ALTRIMENTI/FINE, RIPETI N VOLTE, MENTRE, FUNZIONE.
-3. Mantieni la logica pulita e semplice.`;
+3. Mantieni la logica pulita e semplice e commenta le parti commentate usando lo stile standard di .rig (i commenti in .rig iniziano con # o //, mantieni uno stile pulito).`;
 
   try {
     const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {

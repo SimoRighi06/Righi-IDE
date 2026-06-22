@@ -23,6 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
+
+
 # Segreti e configurazioni
 .env
 .env.local
@@ -40,8 +42,3 @@ build/
 Thumbs.db
 
 
-#db
-username: simonerighi_db_user
-psw: AVUCEUk2sPmXFFaH
-
-mongodb+srv://simonerighi_db_user:AVUCEUk2sPmXFFaH@cluster0.k20d0w7.mongodb.net/?appName=Cluster0
