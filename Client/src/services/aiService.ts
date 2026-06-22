@@ -19,7 +19,8 @@ export const translateWithAI = async (
 
 export const translateWithAI = async (prompt: string, language: string, signal?: AbortSignal) => {
   try {
-    const res = await fetch("http://localhost:5000/api/translate", {
+    // AGGIUNTO /api/translate alla fine dell'URL!
+    const res = await fetch("https://righi-ide.onrender.com/api/translate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt, language }),
