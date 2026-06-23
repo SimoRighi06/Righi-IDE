@@ -1,5 +1,12 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/Client/$1" }
+    {
+      "source": "/api/(.*)",
+      "destination": "/Server/api/$1"
+    },
+    {
+      "source": "/((?!.*\\.(?:js|css|json|ico|png|jpg|jpeg|svg|wasm)$).*)" ,
+      "destination": "/Client/index.html"
+    }
   ]
 }
