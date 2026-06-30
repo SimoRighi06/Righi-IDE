@@ -55,6 +55,9 @@ const App = () => {
     "saved",
   );
 
+  const [activeTab, setActiveTab] = useState('rig'); // Gestisce quale tab è visibile su mobile ('rig', 'py', 'term')
+  const [hasNewOutput, setHasNewOutput] = useState(false); // Gestisce il pallino rosso sul terminale
+
   const pyodideRef = useRef<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isDark = theme === "dark";
@@ -433,20 +436,66 @@ builtins.input = input
     {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
 
     {/* NAVBAR RESPONSIVE */}
-    <BsNavbar
-      bg={isDark ? "black" : "light"}
-      variant={isDark ? "dark" : "light"}
-      className={`px-2 px-md-3 border-bottom ${isDark ? "border-secondary" : "border-secondary-subtle"}`}
-      style={{ minHeight: "50px", height: "auto" }} // Tolto l'altezza fissa rigida per evitare overflow su mobile
-    >
-      <BsNavbar.Brand className="d-flex align-items-center gap-1 gap-md-2 me-auto me-md-3">
-        <Cpu size={20} className="text-warning flex-shrink-0" />
-        <span
-          className={`fw-bold fs-6 fs-md-5 ${isDark ? "text-light" : "text-dark"}`}
-        >
-          RIGHI-IDE
-        </span>
-      </BsNavbar.Brand>
+<BsNavbar
+  bg={isDark ? "black" : "light"}
+  variant={isDark ? "dark" : "light"}
+  className={`px-2 px-md-3 border-bottom ${isDark ? "border-secondary" : "border-secondary-subtle"}`}
+  style={{ minHeight: "50px", height: "auto" }} 
+>
+  <BsNavbar.Brand className="d-flex align-items-center gap-1 gap-md-2 me-auto me-md-3">
+    <Cpu size={20} className="text-warning flex-shrink-0" />
+    <span className={`fw-bold fs-6 fs-md-5 ${isDark ? "text-light" : "text-dark"}`}>
+      RIGHI-IDE
+    </span>
+  </BsNavbar.Brand>
+
+  {/* ... Qui in mezzo c'è il resto della tua Navbar con l'account, i bottoni ESEGUI, ecc ... */}
+
+</BsNavbar> {/* <--- QUESTA È LA CHIUSURA DELLA TUA NAVBAR */}
+
+
+{/* 📝 INCOLLA DA QUI IN POI: BARRA DEI TAB RESPONSIVE (Sotto la Navbar) */}
+<div className={`d-flex d-md-none justify-content-around py-2 border-bottom ${isDark ? "bg-black border-secondary" : "bg-light border-secondary-subtle"}`}>
+  <Button
+    variant="link"
+    className={`text-decoration-none px-2 py-1 ${activeTab === 'rig' ? 'text-warning border-bottom border-warning fw-bold' : 'text-secondary'}`}
+    onClick={() => setActiveTab('rig')}
+    style={{ fontSize: '13px', borderRadius: 0 }}
+  >
+    📝 .rig
+  </Button>
+  
+  <Button
+    variant="link"
+    className={`text-decoration-none px-2 py-1 ${activeTab === 'py' ? 'text-warning border-bottom border-warning fw-bold' : 'text-secondary'}`}
+    onClick={() => setActiveTab('py')}
+    style={{ fontSize: '13px', borderRadius: 0 }}
+  >
+    🐍 Python
+  </Button>
+  
+  <Button
+    variant="link"
+    className={`text-decoration-none px-2 py-1 position-relative ${activeTab === 'term' ? 'text-warning border-bottom border-warning fw-bold' : 'text-secondary'}`}
+    onClick={() => {
+      setActiveTab('term');
+      setHasNewOutput(false); 
+    }}
+    style={{ fontSize: '13px', borderRadius: 0 }}
+  >
+    💻 Terminale
+    {hasNewOutput && (
+      <span 
+        className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
+        style={{ width: '8px', height: '8px' }}
+      />
+    )}
+  </Button>
+</div>
+{/* 📝 FINE DELLA BARRA DEI TAB RESPONSIVE */}
+
+
+{/* Da qui in poi riprende il resto del tuo layout, es. la <div className="main-content"> o la <Row> degli editor */}
 
       {/* Account - compattato su mobile */}
       {user ? (
