@@ -1,5 +1,6 @@
 import { Navbar as BsNavbar, Button, Badge, Stack } from 'react-bootstrap';
 import { Cpu, Play, Save } from 'lucide-react';
+export default function MioComponenteNavbar({ activeTab, setActiveTab, hasNewOutput, setHasNewOutput }) {
 
 interface NavbarProps {
   onExecute: () => void;
