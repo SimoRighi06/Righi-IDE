@@ -55,12 +55,12 @@ const App = () => {
     "saved",
   );
 
-  const [activeTab, setActiveTab] = useState('rig'); // Gestisce quale tab è visibile su mobile ('rig', 'py', 'term')
-  const [hasNewOutput, setHasNewOutput] = useState(false); // Gestisce il pallino rosso sul terminale
-
   const pyodideRef = useRef<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isDark = theme === "dark";
+
+  const [activeTab, setActiveTab] = useState('rig'); // Gestisce il tab visibile su mobile
+  const [hasNewOutput, setHasNewOutput] = useState(false); // Gestisce il pallino rosso del terminale
 
   // ── Pyodide ────────────────────────────────────────────────────────────────
   useEffect(() => {
