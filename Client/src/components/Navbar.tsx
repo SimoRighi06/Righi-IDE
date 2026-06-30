@@ -20,4 +20,10 @@ export const Navbar = ({ onExecute }: NavbarProps) => (
       </Button>
     </Stack>
   </BsNavbar>
+  {/* La barra dei tab responsive che abbiamo aggiunto prima, ora funzionerà magicamente! */}
+      <div className="d-flex d-md-none ...">
+        <Button onClick={() => setActiveTab('rig')} ...>📝 .rig</Button>
+        <Button onClick={() => setActiveTab('py')} ...>🐍 Python</Button>
+        <Button onClick={() => { setActiveTab('term'); setHasNewOutput(false); }} ...>💻 Terminale</Button>
+      </div>
 );
