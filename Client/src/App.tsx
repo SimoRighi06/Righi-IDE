@@ -559,6 +559,44 @@ builtins.input = input
       </Stack>
     </BsNavbar>
 
+    <div className="d-flex d-md-none bg-black border-bottom border-secondary justify-content-around py-2">
+  <Button
+    variant="link"
+    className={`text-decoration-none px-2 py-1 ${activeTab === 'rig' ? 'text-warning border-bottom border-warning fw-bold' : 'text-secondary'}`}
+    onClick={() => setActiveTab('rig')}
+    style={{ fontSize: '13px', borderRadius: 0 }}
+  >
+    📝 .rig
+  </Button>
+  
+  <Button
+    variant="link"
+    className={`text-decoration-none px-2 py-1 ${activeTab === 'py' ? 'text-warning border-bottom border-warning fw-bold' : 'text-secondary'}`}
+    onClick={() => setActiveTab('py')}
+    style={{ fontSize: '13px', borderRadius: 0 }}
+  >
+    🐍 Python
+  </Button>
+  
+  <Button
+    variant="link"
+    className={`text-decoration-none px-2 py-1 position-relative ${activeTab === 'term' ? 'text-warning border-bottom border-warning fw-bold' : 'text-secondary'}`}
+    onClick={() => {
+      setActiveTab('term');
+      setHasNewOutput(false); // Nasconde il pallino quando l'utente legge
+    }}
+    style={{ fontSize: '13px', borderRadius: 0 }}
+  >
+    💻 Terminale
+    {hasNewOutput && (
+      <span 
+        className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
+        style={{ width: '8px', height: '8px' }}
+      />
+    )}
+  </Button>
+</div>
+
     {/* BODY */}
     <div className="d-flex flex-grow-1 overflow-hidden position-relative">
       {/* ACTIVITY BAR */}
